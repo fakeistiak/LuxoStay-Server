@@ -29,7 +29,7 @@ async function run() {
     await client.connect();
 
     const roomsCollection = client.db("SuiteSparkle").collection("rooms");
-
+    const bookingsCollection = client.db("SuiteSparkle").collection("bookings");
     // rooms query
 
     app.get("/rooms", async (req, res) => {
@@ -69,6 +69,21 @@ async function run() {
         updatedStatus
       );
       res.send(updateStatus);
+    });
+
+    app.get("/mybookings/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = {
+        email: email,
+      };
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/mybookings", async (req, res) => {
+      const data = req.body;
+      const postData = await bookingsCollection.insertOne(data);
+      res.send(postData);
     });
 
     // Send a ping to confirm a successful connection
