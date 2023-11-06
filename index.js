@@ -58,10 +58,11 @@ async function run() {
 
     app.patch("/booking/:id", async (req, res) => {
       const id = req.params.id;
+      const { isBooked } = req.body;
       const query = { _id: new ObjectId(id) };
       const updatedStatus = {
         $set: {
-          isBooked: true,
+          isBooked,
         },
       };
       const updateStatus = await roomsCollection.updateOne(
@@ -84,6 +85,24 @@ async function run() {
       const data = req.body;
       const postData = await bookingsCollection.insertOne(data);
       res.send(postData);
+    });
+
+    app.delete("/mybookings/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      try {
+        const result = await bookingsCollection.deleteOne(query);
+
+        if (result.deletedCount > 0) {
+          res.status(200).json({ message: "Booking deleted successfully" });
+        } else {
+          res.status(404).json({ error: "Booking not found" });
+        }
+      } catch (error) {
+        console.error("Error deleting booking:", error);
+        res.status(500).json({ error: "Internal server error" });
+      }
     });
 
     // Send a ping to confirm a successful connection
