@@ -59,6 +59,7 @@ async function run() {
     app.patch("/booking/:id", async (req, res) => {
       const id = req.params.id;
       const { isBooked } = req.body;
+
       const query = { _id: new ObjectId(id) };
       const updatedStatus = {
         $set: {
@@ -87,22 +88,20 @@ async function run() {
       res.send(postData);
     });
 
-
-    app.patch('/mybookings/:id', async (req, res) => {
+    app.patch("/mybookings/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const updateBooking = req.body;
-      console.log(updateBooking);
+      const { status, bookingDate } = req.body;
+
       const updateDoc = {
         $set: {
-          status: updateBooking.status
+          status: status,
+          bookingDate,
         },
       };
       const result = await bookingsCollection.updateOne(filter, updateDoc);
       res.send(result);
-    })
-
-
+    });
 
     app.delete("/mybookings/:id", async (req, res) => {
       const id = req.params.id;
