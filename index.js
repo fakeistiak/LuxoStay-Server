@@ -6,8 +6,13 @@ const app = express();
 const port = process.env.PORT || 5000;
 const morgan = require("morgan");
 //middleware
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
-app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 console.log(process.env.DB_PASS);
@@ -26,7 +31,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const roomsCollection = client.db("SuiteSparkle").collection("rooms");
     const bookingsCollection = client.db("SuiteSparkle").collection("bookings");
